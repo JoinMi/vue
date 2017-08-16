@@ -66,6 +66,113 @@ router.post('/logout', function(req, res, next){
     result: '退出成功'
   })
 })
+
+router.get('/Cart', function(req, res, next){
+  User.findOne({userId: req.cookies.userId}, function(err, doc){
+    if (err) {
+      res.json({
+        status: 1,
+        msg: '',
+        result: ''
+      })
+    } else {
+      if (doc) {
+        res.json({
+          status: 0,
+          msg: '',
+          result: doc.cartList
+        })
+      }
+    }
+  })
+})
+
+router.post('/cartDel', function(req, res, next){
+  var userId = req.cookies.userId
+  var productId = req.body.productId
+  console.log(userId, productId)
+  User.update({
+    userId: userId
+  },{
+    $pull: {
+      'cartList': {
+        'productId': productId
+      }
+    }
+  }, function(err, doc){
+      if (err) {
+        res.json({
+          status: 1,
+          msg: err.message,
+          result: ''
+        })
+      } else {
+        res.json({
+          status: 0,
+          msg: '',
+          result: '商品删除成功'
+        })
+      }
+  })
+})
+
+router.post('/cartEdit', function(req, res, next){
+  let userId = req.cookies.userId
+  let productId = req.body.productId
+  let productNum = req.body.productNum
+  let checked = req.body.checked
+  User.update({"userId": userId, "cartList.productId": productId}, {
+    "cartList.$.productNum": productNum, "cartList.$.checked": checked
+  },function(err, doc){
+    if (err) {
+      res.json({
+        status: 1,
+        msg: err.message,
+        result: ''
+      })
+      } else {
+      res.json({
+        status: 0,
+        msg: "",
+        result: '商品更新成功'
+      })
+    }
+  })
+})
+
+router.post('/editCheckAll', function(req, res, next){
+  let userId = req.cookies.userId
+  let checkAll = req.body.checkAll ? '1' : "0"
+  User.findOne({'userId': userId}, function(err, user){
+    if (err) {
+      res.json({
+        status: 1,
+        msg: err.message,
+        result: ''
+      })
+    } else {
+      user.cartList.forEach((item) => {
+        item.checked = checkAll
+      }),
+      user.save(function(err, doc){
+        if (err) {
+          res.json({
+            status: 1,
+            mag: err.message,
+            result: ''
+          })
+        } else {
+          res.json({
+            statue: 0,
+            mag: doc,
+            result: '全选成功'
+          })
+        }
+      })
+    }
+  })
+})
+
 router.get('*', function(req, res, next){
   res.send('我,打钱')
 })

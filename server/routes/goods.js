@@ -108,6 +108,7 @@ router.post("/addCart", function(req, res, next){
             })
           }
           goodsDoc.productNum = 1
+          goodsDoc.checked = 1
           userDoc.cartList.push(goodsDoc)
           userDoc.save(function (err2, Doc2) {
             if (err2) {

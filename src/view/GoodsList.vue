@@ -46,12 +46,26 @@
     </div>
   </div>
   <app-footer></app-footer>
+  <modal :mdShow="mdShow">
+    <p slot="message">请先登录否则无法加入购物车</p>
+    <div slot="btnGroup">
+      <a href="javescript:;" class="btn-login" @click="mdShow = false">关闭</a>
+    </div>
+  </modal>
+  <modal :mdShow="mdShowCart">
+    <p slot="message">加入购物车成功</p>
+    <div slot="btnGroup">
+      <a href="javescript:;" class="btn btn--m" @click="mdShowCart = false">关闭</a>
+      <router-link class="btn btn--m" to="/Cart">查看购物车</router-link>
+    </div>
+  </modal>
 </div>
 </template>
 <script>
   import AppHeader from '@/components/Header'
   import AppFooter from '@/components/Footer'
   import NavBread from '@/components/NavBread'
+  import Modal from '@/components/Modal'
   import axios from 'axios'
   export default {
     name: 'GoodsList',
@@ -62,6 +76,8 @@
         priceChecked: 'all',
         busy: true,
         lock: false,
+        mdShow: false,
+        mdShowCart: false,
         page: 1,
         pagesize: 8,
         priceFilter: [
@@ -91,7 +107,8 @@
     components: {
       AppHeader,
       AppFooter,
-      NavBread
+      NavBread,
+      Modal
     },
     mounted: function () {
       this.getGoodsList()
@@ -129,11 +146,14 @@
         axios.post('/goods/addCart', {productId}).then((res) => {
           console.log(res)
           if (res.data.status === 0 || res.data.status === '0') {
-            alert('加入购物车成功')
+            this.mdShowCart = true
           } else {
-            alert('加入购物车失败')
+            this.mdShow = true
           }
         })
+      },
+      closeModal () {
+        this.mdShow = false
       },
       sortGoods () {
         this.sortFlag = !this.sortFlag

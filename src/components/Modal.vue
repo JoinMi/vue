@@ -1,38 +1,28 @@
 <template>
   <div>
-    <div class="md-modal modal-msg md-modal-transition" :class="{'md-show':loginModalFlag}" >
+    <div class="md-modal modal-msg md-modal-transition" :class="{'md-show':mdShow}" >
       <div class="md-modal-inner">
         <div class="md-top">
-          <div class="md-title" >login in</div>
-          <button class="md-close" @click="loginModalFlag = false" >Close</button>
+          <div class="md-title" >信息提醒</div>
+          <button class="md-close">Close</button>
         </div>
         <div class="md-content">
           <div class="confirm-tips">
-            <div class="error-wrap">
-              <span class="error error-show" v-show="errorTip">用户名或密码错误</span>
-            </div>
-            <ul>
-              <li class="regi_form_input">
-                <input type="text" tabindex="1" name="loginname" placeholder="User Name" data-type="loginname" class="regi_login_input regi_login_input_left" v-model="userName">
-              </li>
-              <li class="regi_form_input noMargin">
-                <i class="icon IconPwd"></i>
-                <input type="password" tabindex="2" name="password" placeholder="Password" class="regi_login_input regi_login_input_left login-input-no input_text" @keyup.enter="login" v-model="userPwd">
-              </li>
-            </ul>
+            <slot name="message"></slot>
           </div>
-          <div class="login-wrap">
-            <a href="javascript:;" class="btn-login"  @click="login">登录</a>
+          <div class="btn-wrap">
+            <slot name="btnGroup"></slot>
           </div>
         </div>
       </div>
     </div>
-    <div class="md-overlay" v-if="loginModalFlag" @click="loginModalFlag = false">
+    <div class="md-overlay" v-if="mdShow">
     </div>
   </div>
 </template>
 <script>
   export default {
+    props: ['mdShow']
   }
 </script>
 <style>
